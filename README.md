@@ -1,28 +1,20 @@
-# IoT Device Backend 🚀
+# 🚀 IoT Device Telemetry Management
 
-This project is an IoT backend system built using:
+Backend system for storing and analyzing IoT device data using Node.js.
 
+## 🔥 Features
+- Device data REST API (Swagger documented)
+- MongoDB for device metadata storage
+- InfluxDB for time-series telemetry data
+- Swagger UI testing interface
+
+## 🛠 Tech Stack
 - Node.js
 - Express.js
 - MongoDB
-- Swagger API Documentation
+- InfluxDB
+- Swagger (OpenAPI)
 
-## Features
-- Device data storage
-- REST APIs
-- Swagger UI testing
-- MongoDB integration
+## 📡 API Endpoint
 
-## APIs
-
-### POST /api/device
-Save device telemetry data.
-
-### GET /api/device
-Fetch all device data.
-
-## Run Locally
-
-```bash
-npm install
-node server.js
+POST Device Data:
