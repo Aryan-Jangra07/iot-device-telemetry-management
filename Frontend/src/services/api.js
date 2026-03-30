@@ -1,36 +1,52 @@
-import axios from 'react'; // Note: importing axios here just to set it up, wait, axios is imported from 'axios'
-import axiosInstance from 'axios';
+import axios from 'axios';
 
-// Create basic axios instance
-const api = axiosInstance.create({
-  baseURL: '/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+const api = axios.create({
+  baseURL: 'http://localhost:5000/api',
 });
 
-// Placeholder functions for future integration
-export const loginUser = async (credentials) => {
-  // return await api.post('/auth/login', credentials);
-  console.log('Dummy login call with:', credentials);
-  return { data: { token: 'dummy_token' } };
+// Request interceptor to add JWT token
+api.interceptors.request.use(
+  (config) => {
+    const user = JSON.parse(localStorage.getItem('iot_user'));
+    if (user && user.token) {
+      config.headers.Authorization = `Bearer ${user.token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor to handle token expiration
+let isRedirecting = false;
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401 && !isRedirecting) {
+      isRedirecting = true;
+      localStorage.removeItem('iot_user');
+      window.location.replace('/login');
+    }
+    return Promise.reject(error);
+  }
+);
+
+export const authService = {
+  login: (email, password) => api.post('/users/login', { email, password }),
+  register: (email, password, role = 'user') => api.post('/users/register', { email, password, role }),
 };
 
-export const registerDevice = async (deviceData) => {
-  // return await api.post('/devices/register', deviceData);
-  console.log('Dummy register call with:', deviceData);
-  return { data: { success: true } };
-};
-
-export const getDevices = async () => {
-  // return await api.get('/devices');
-  console.log('Dummy get devices call');
-  return {
-    data: [
-      { id: 'DEV001', temperature: '22°C', status: 'Online', lastUpdated: '2 mins ago' },
-      { id: 'DEV002', temperature: '24°C', status: 'Offline', lastUpdated: '1 hour ago' },
-    ]
-  };
+export const deviceService = {
+  getDevices: () => api.get('/devices'),
+  registerDevice: (name) => api.post('/devices/register', { name }),
+  deleteDevice: (deviceId) => api.delete(`/devices/${encodeURIComponent(deviceId)}`),
+  getTelemetry: (deviceId) => api.get(`/devices/${encodeURIComponent(deviceId)}/telemetry`, {
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    }
+  }),
+  sendCommand: (deviceId, command, payload = {}) => api.post(`/devices/${encodeURIComponent(deviceId)}/command`, { command, payload }),
 };
 
 export default api;

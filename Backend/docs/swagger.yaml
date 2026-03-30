@@ -1,16 +1,56 @@
 openapi: 3.0.0
 info:
-  title: IoT Device API
-  version: 1.0.0
-  description: API for storing IoT device data
-
+  title: IoT Backend API
+  version: 2.0.0
+  description: Secure IoT Device and Authentication API
 servers:
   - url: http://localhost:5000
-
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    UserRegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string }
+        password: { type: string }
+        role: { type: string, enum: [user, admin] }
+    DeviceRegisterRequest:
+      type: object
+      required: [deviceId, name]
+      properties:
+        deviceId: { type: string }
+        name: { type: string }
+        config: { type: object }
+    CommandRequest:
+      type: object
+      required: [command]
+      properties:
+        command: { type: string }
+        payload: { type: object }
+security:
+  - bearerAuth: []
 paths:
-  /api/device:
+  /api/users/register:
     post:
-      summary: Save device data
+      summary: Register a new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterRequest'
+      responses:
+        '201': { description: Created }
+  /api/users/login:
+    post:
+      summary: Login user
+      security: []
       requestBody:
         required: true
         content:
@@ -18,12 +58,39 @@ paths:
             schema:
               type: object
               properties:
-                deviceId:
-                  type: string
-                temperature:
-                  type: number
-                status:
-                  type: string
+                email: { type: string }
+                password: { type: string }
       responses:
-        "201":
-          description: Device data saved successfully
+        '200': { description: Success returns JWT }
+  /api/devices/register:
+    post:
+      summary: Register an IoT Device
+      requestBody:
+        required: true
+        content:
+          application/json:
+             schema:
+               $ref: '#/components/schemas/DeviceRegisterRequest'
+      responses:
+        '201': { description: Returns device and MQTT tokens }
+  /api/devices:
+    get:
+      summary: Get all owned devices
+      responses:
+        '200': { description: Array of devices }
+  /api/devices/{id}/command:
+    post:
+      summary: Send command to device over MQTT
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommandRequest'
+      responses:
+        '200': { description: Command queued }
