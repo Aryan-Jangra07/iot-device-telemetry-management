@@ -11,8 +11,10 @@ import {
   Area
 } from 'recharts';
 import { format } from 'date-fns';
+import { useTheme } from '../context/ThemeContext';
 
 const TelemetryChart = ({ data, title, dataKey, color }) => {
+  const { isDark } = useTheme();
   const validData = Array.isArray(data) ? data : [];
   const formattedData = validData.map(item => {
     let formattedTime = '';
@@ -22,10 +24,10 @@ const TelemetryChart = ({ data, title, dataKey, color }) => {
     return { ...item, formattedTime };
   });
   return (
-    <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 p-6 rounded-2xl shadow-xl h-[400px]">
+    <div className="bg-white dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xl h-[400px]">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-bold text-white tracking-tight">{title}</h3>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{title}</h3>
           <p className="text-xs text-slate-500 font-medium uppercase tracking-widest mt-1">Live Telemetry Feed</p>
         </div>
         <div className="flex items-center gap-2">
@@ -42,7 +44,7 @@ const TelemetryChart = ({ data, title, dataKey, color }) => {
               <stop offset="95%" stopColor={color} stopOpacity={0}/>
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#1e293b" : "#e2e8f0"} vertical={false} />
           <XAxis 
             dataKey="formattedTime" 
             stroke="#64748b" 
@@ -60,14 +62,14 @@ const TelemetryChart = ({ data, title, dataKey, color }) => {
           />
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: '#0f172a', 
-              border: '1px solid #1e293b',
+              backgroundColor: isDark ? '#0f172a' : '#ffffff', 
+              border: `1px solid ${isDark ? '#1e293b' : '#e2e8f0'}`,
               borderRadius: '12px',
               fontSize: '12px',
-              color: '#fff' 
+              color: isDark ? '#fff' : '#0f172a'
             }}
-            itemStyle={{ color: '#fff' }}
-            cursor={{ stroke: '#334155', strokeWidth: 1 }}
+            itemStyle={{ color: isDark ? '#fff' : '#0f172a' }}
+            cursor={{ stroke: isDark ? '#334155' : '#cbd5e1', strokeWidth: 1 }}
           />
           <Area
             type="monotone"

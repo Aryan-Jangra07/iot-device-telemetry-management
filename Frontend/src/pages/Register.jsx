@@ -27,15 +27,15 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 transition-colors duration-300">
       <div className="w-full max-w-md">
-        <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-8 rounded-2xl shadow-2xl">
+        <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 p-8 rounded-2xl shadow-2xl">
           <div className="flex flex-col items-center mb-8">
             <div className="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center mb-4 border border-blue-500/30">
               <UserPlus className="text-blue-400 w-8 h-8" />
             </div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">Create Account</h1>
-            <p className="text-slate-400 mt-2">Join the IoT Cloud Ecosystem</p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Create Account</h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-2">Join the IoT Cloud Ecosystem</p>
           </div>
 
           {error && (
@@ -47,22 +47,22 @@ const Register = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2 px-1">Email Address</label>
+              <label className="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 px-1">Email Address</label>
               <input
                 type="email"
                 required
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2 px-1">Password</label>
+              <label className="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 px-1">Password</label>
               <input
                 type="password"
                 required
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -70,14 +70,14 @@ const Register = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2 px-1">Access Level</label>
+              <label className="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 px-1">Access Level</label>
               <div className="flex gap-4">
                 <button
                   type="button"
                   className={`flex-1 py-3 px-4 rounded-xl border transition-all flex items-center justify-center gap-2 font-medium ${
                     role === 'user' 
-                    ? 'bg-blue-600/20 border-blue-500 text-blue-400' 
-                    : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
+                    ? 'bg-blue-50 dark:bg-blue-600/20 border-blue-500 text-blue-600 dark:text-blue-400' 
+                    : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-500 hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
                   onClick={() => setRole('user')}
                 >
@@ -87,8 +87,8 @@ const Register = () => {
                   type="button"
                   className={`flex-1 py-3 px-4 rounded-xl border transition-all flex items-center justify-center gap-2 font-medium ${
                     role === 'admin' 
-                    ? 'bg-blue-600/20 border-blue-500 text-blue-400' 
-                    : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
+                    ? 'bg-blue-50 dark:bg-blue-600/20 border-blue-500 text-blue-600 dark:text-blue-400' 
+                    : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-500 hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
                   onClick={() => setRole('admin')}
                 >
@@ -114,7 +114,7 @@ const Register = () => {
             </button>
           </form>
 
-          <p className="text-center text-slate-400 mt-8">
+          <p className="text-center text-slate-500 dark:text-slate-400 mt-8">
             Already have an account?{' '}
             <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium ml-1">
               Sign In

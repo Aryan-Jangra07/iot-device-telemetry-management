@@ -43,7 +43,7 @@ const Settings = () => {
   ];
 
   return (
-    <div className="flex bg-slate-950 min-h-screen text-slate-100 font-sans">
+    <div className="flex bg-slate-50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300">
       <Sidebar />
       
       <main className="flex-1 ml-64 p-8 relative overflow-hidden">
@@ -53,21 +53,21 @@ const Settings = () => {
               User Preferences
             </span>
           </div>
-          <h2 className="text-4xl font-black text-white tracking-tighter">Settings</h2>
+          <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">Settings</h2>
         </header>
 
         <div className="max-w-4xl space-y-8 relative z-10">
           {sections.map((section, idx) => (
-            <div key={idx} className="bg-slate-900/50 border border-slate-800 rounded-3xl overflow-hidden backdrop-blur-sm">
-              <div className="px-8 py-5 border-b border-slate-800 flex items-center gap-3 bg-slate-900/30">
+            <div key={idx} className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden backdrop-blur-sm">
+              <div className="px-8 py-5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 bg-slate-50 dark:bg-slate-900/30">
                 <section.icon className="w-5 h-5 text-blue-500" />
-                <h3 className="font-bold text-sm uppercase tracking-widest text-slate-300">{section.title}</h3>
+                <h3 className="font-bold text-sm uppercase tracking-widest text-slate-700 dark:text-slate-300">{section.title}</h3>
               </div>
               <div className="p-8 space-y-6">
                 {section.items.map((item, i) => (
                   <div key={i} className="flex items-center justify-between group">
                     <div>
-                      <p className="text-sm font-medium text-slate-400 mb-1">{item.label}</p>
+                      <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">{item.label}</p>
                       {item.type === 'badge' ? (
                         <span className="bg-blue-600/20 text-blue-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border border-blue-500/20">
                           {item.value}
@@ -78,11 +78,11 @@ const Settings = () => {
                           <span className="text-emerald-400 font-bold text-sm tracking-tight">{item.value}</span>
                         </div>
                       ) : (
-                        <p className="text-white font-semibold">{item.value}</p>
+                        <p className="text-slate-900 dark:text-white font-semibold">{item.value}</p>
                       )}
                     </div>
                     {item.type === 'button' && (
-                      <button className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all border border-slate-700">
+                      <button className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all border border-slate-200 dark:border-slate-700">
                         {item.btnLabel}
                       </button>
                     )}
