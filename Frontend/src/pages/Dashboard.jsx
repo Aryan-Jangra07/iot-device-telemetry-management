@@ -6,6 +6,7 @@ import { CardSkeleton, ChartSkeleton } from '../components/Skeletons';
 import EmptyState from '../components/EmptyState';
 import OnboardingModal from '../components/OnboardingModal';
 import { deviceService } from '../services/api';
+import { connectSocket } from '../services/socket';
 import useDeviceStore from '../store/deviceStore';
 import { 
   RefreshCcw, Plus, Layout, Grid2X2, LineChart as LineChartIcon,
@@ -52,9 +53,23 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!selectedDevice) return;
-    fetchTelemetry(true); // Initial fetch with loading state
-    const interval = setInterval(() => fetchTelemetry(false), 3000); // Polling sync
-    return () => clearInterval(interval);
+    
+    // Initial data fetch
+    fetchTelemetry(true);
+
+    // Subscribe to real-time updates
+    const unsubscribe = connectSocket(selectedDevice.deviceId, (newPoint) => {
+      setTelemetry((prev) => {
+        const updated = [...prev, newPoint];
+        // Keep only last 50 points to prevent performance degradation
+        return updated.slice(-50);
+      });
+      setLastRefreshed(new Date());
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, [selectedDevice, fetchTelemetry]);
 
   const handleSync = () => {

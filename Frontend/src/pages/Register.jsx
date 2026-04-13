@@ -4,6 +4,7 @@ import { authService } from '../services/api';
 import { UserPlus, LogIn, AlertCircle, Loader2, ShieldCheck } from 'lucide-react';
 
 const Register = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
@@ -17,7 +18,7 @@ const Register = () => {
     setError('');
 
     try {
-      await authService.register(email, password, role);
+      await authService.register(email, password, role, name);
       navigate('/login');
     } catch (err) {
       setError(err.message || 'Registration failed');
@@ -46,6 +47,17 @@ const Register = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 px-1">Full Name</label>
+              <input
+                type="text"
+                required
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 px-1">Email Address</label>
               <input

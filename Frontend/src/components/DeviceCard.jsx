@@ -51,23 +51,23 @@ const DeviceCard = ({ device, onSelect, isSelected }) => {
       }`}
     >
       <div className="p-5">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className={`p-2.5 rounded-xl transition-colors ${
-              isSelected ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700'
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <div className="flex items-center gap-3 w-full sm:w-auto overflow-hidden">
+            <div className={`p-2.5 rounded-xl transition-all duration-300 shrink-0 ${
+              isSelected ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700'
             }`}>
               <Cpu className="w-6 h-6" />
             </div>
-            <div>
-              <h3 className="font-bold text-lg text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-bold text-lg text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight truncate">
                 {device?.name || 'Unknown Device'}
               </h3>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="bg-zinc-50 dark:bg-zinc-950 px-2 py-0.5 rounded text-[10px] font-mono text-blue-500 dark:text-blue-400 border border-zinc-200 dark:border-zinc-800 tracking-tighter">
+              <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                <span className="bg-zinc-50 dark:bg-zinc-950 px-2 py-0.5 rounded text-[10px] font-mono text-blue-500 dark:text-blue-400 border border-zinc-200 dark:border-zinc-800 tracking-tighter truncate max-w-full">
                   ID: {device?.deviceId || 'N/A'}
                 </span>
-                <div className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-                <div className="flex items-center gap-1">
+                <div className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700 shrink-0 hidden sm:block" />
+                <div className="flex items-center gap-1 shrink-0">
                   <div className={`w-2 h-2 rounded-full ${
                     device.status === 'online' ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-500'
                   }`} />
@@ -82,15 +82,15 @@ const DeviceCard = ({ device, onSelect, isSelected }) => {
           </div>
           
           {/* Controls Right Header */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end sm:justify-start shrink-0">
             <Tooltip content={isOn ? 'Power Off' : 'Power On'}>
               <button 
                 onClick={handleToggle}
                 disabled={isProcessing}
-                className={`p-2 rounded-lg transition-all border ${
+                className={`p-2.5 rounded-xl transition-all duration-300 border flex items-center justify-center ${
                   isOn 
-                    ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20' 
-                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 border-transparent hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                    ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500 hover:text-white hover:shadow-lg hover:shadow-emerald-500/20' 
+                    : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-500 border-transparent hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-white'
                 } ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <Power className="w-4 h-4" />
@@ -100,7 +100,7 @@ const DeviceCard = ({ device, onSelect, isSelected }) => {
             <Tooltip content="Delete Device">
               <button 
                 onClick={handleDelete}
-                className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all border border-red-500/20"
+                className="p-2.5 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 border border-red-500/20 hover:shadow-lg hover:shadow-red-500/20 flex items-center justify-center"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -108,8 +108,10 @@ const DeviceCard = ({ device, onSelect, isSelected }) => {
             
             <button 
               onClick={() => onSelect(device)}
-              className={`p-2 rounded-lg transition-all ${
-                isSelected ? 'bg-blue-600 text-white' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:bg-blue-50 dark:hover:bg-blue-600/20 hover:text-blue-600'
+              className={`p-2.5 rounded-xl transition-all duration-300 flex items-center justify-center border ${
+                isSelected 
+                ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/30' 
+                : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-500 border-transparent hover:bg-blue-50 dark:hover:bg-blue-600/20 hover:text-blue-600 hover:border-blue-500/30'
               }`}
             >
               <ChevronRight className={`w-4 h-4 transition-transform ${isSelected ? 'rotate-90' : ''}`} />

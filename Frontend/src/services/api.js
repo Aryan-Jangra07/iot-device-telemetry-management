@@ -32,7 +32,16 @@ api.interceptors.response.use(
 
 export const authService = {
   login: (email, password) => api.post('/users/login', { email, password }),
-  register: (email, password, role = 'user') => api.post('/users/register', { email, password, role }),
+  register: (email, password, role = 'user', name) => {
+    const payload = { 
+      email, 
+      password, 
+      role: String(role).toLowerCase(), 
+      name 
+    };
+    console.log('[DEBUG] Registration Payload:', payload);
+    return api.post('/users/register', payload);
+  },
 };
 
 export const deviceService = {
@@ -47,6 +56,7 @@ export const deviceService = {
     }
   }),
   sendCommand: (deviceId, command, payload = {}) => api.post(`/devices/${encodeURIComponent(deviceId)}/command`, { command, payload }),
+  getAnalytics: () => api.get('/devices/stats/analytics'),
 };
 
 export const adminService = {

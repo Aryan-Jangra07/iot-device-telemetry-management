@@ -1,22 +1,6 @@
 import { create } from 'zustand';
-import axios from 'axios';
 import toast from 'react-hot-toast';
-import { getUser } from '../utils/auth';
-
-// Configure standard axios instance
-const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
-});
-
-// Interceptor for JWT token
-api.interceptors.request.use((config) => {
-  const user = getUser();
-  if (user && user.token) {
-    config.headers.Authorization = `Bearer ${user.token}`;
-  }
-  return config;
-});
-
+import api, { deviceService } from '../services/api';
 const useDeviceStore = create((set, get) => ({
   devices: [],
   isLoading: false,
@@ -25,7 +9,7 @@ const useDeviceStore = create((set, get) => ({
   fetchDevices: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.get('/devices');
+      const response = await deviceService.getDevices();
       set({ devices: response.data, isLoading: false });
     } catch (error) {
       set({ 
@@ -45,7 +29,7 @@ const useDeviceStore = create((set, get) => ({
     }));
     
     try {
-      await api.post(`/devices/${deviceId}/command`, { command, payload });
+      await deviceService.sendCommand(deviceId, command, payload);
       toast.success(`Command "${command}" sent successfully`);
     } catch (error) {
       toast.error(error.response?.data?.message || `Failed to send "${command}"`);
@@ -62,7 +46,7 @@ const useDeviceStore = create((set, get) => ({
 
   deleteDevice: async (deviceId) => {
     try {
-      await api.delete(`/devices/${deviceId}`);
+      await deviceService.deleteDevice(deviceId);
       set((state) => ({
         devices: state.devices.filter(d => d.deviceId !== deviceId)
       }));
@@ -75,7 +59,7 @@ const useDeviceStore = create((set, get) => ({
   
   registerDevice: async (name, config = {}) => {
     try {
-      const res = await api.post('/devices/register', { name, config });
+      const res = await deviceService.registerDevice(name, config);
       // Reload logic slightly to not fake too much data (DB populates defaults)
       await get().fetchDevices(); 
       toast.success('Device registered!');
