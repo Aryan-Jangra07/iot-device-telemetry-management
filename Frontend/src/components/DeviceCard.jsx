@@ -8,8 +8,9 @@ import Tooltip from './Tooltip';
 
 const DeviceCard = ({ device, onSelect, isSelected }) => {
   const [command, setCommand] = useState('');
-  const [isOn, setIsOn] = useState(false); // Optimistic local toggle state
   const { sendCommand, deleteDevice } = useDeviceStore();
+  
+  const isOn = device.status === 'online';
 
   const handleSendCommand = async (e) => {
     e.preventDefault();
@@ -25,11 +26,10 @@ const DeviceCard = ({ device, onSelect, isSelected }) => {
   const handleToggle = async (e) => {
     e.stopPropagation();
     const targetState = !isOn;
-    setIsOn(targetState); // Optimistic UI
     try {
       await sendCommand(device.deviceId, targetState ? 'POWER_ON' : 'POWER_OFF');
-    } catch {
-      setIsOn(!targetState); // Revert on fail
+    } catch (err) {
+      console.error(err);
     }
   };
 

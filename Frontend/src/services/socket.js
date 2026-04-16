@@ -19,6 +19,19 @@ export const connectSocket = (deviceId, onTelemetry) => {
   };
 };
 
+export const subscribeStatus = (deviceId, onStatus) => {
+  if (!socket.connected) {
+    socket.connect();
+  }
+
+  const topic = `deviceStatus/${deviceId}`;
+  socket.on(topic, onStatus);
+
+  return () => {
+    socket.off(topic, onStatus);
+  };
+};
+
 export const disconnectSocket = () => {
   if (socket.connected) {
     socket.disconnect();

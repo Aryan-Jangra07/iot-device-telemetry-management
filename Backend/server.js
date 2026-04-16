@@ -10,6 +10,9 @@ const morgan = require("morgan");
 
 const connectDB = require("./config/db");
 const { initMQTT } = require("./services/mqttService");
+const { setIoInstance } = require("./services/publishingService");
+const { startAllActiveDevices } = require("./services/simulationService");
+
 const userRoutes = require("./routes/userRoutes");
 const deviceRoutes = require("./routes/deviceRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -40,7 +43,10 @@ const limiter = rateLimit({
 app.use("/api/", limiter);
 
 // ================= DATABASE CONNECT =================
-connectDB();
+connectDB().then(() => {
+  // After DB connects, bootstrap simulations
+  startAllActiveDevices();
+});
 
 // ================= ROUTES =================
 app.use("/api/users", userRoutes);
@@ -55,8 +61,10 @@ app.get("/", (req, res) => {
 // ================= ERROR HANDLING =================
 app.use(errorHandler);
 
-// ================= SERVER & MQTT START =================
 const PORT = process.env.PORT || 5000;
+
+// Set the global IO instance for the backend publishing service
+setIoInstance(io);
 
 // Initialize MQTT with Socket.io instance
 initMQTT(1883, io);

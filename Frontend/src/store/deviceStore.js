@@ -29,8 +29,17 @@ const useDeviceStore = create((set, get) => ({
     }));
     
     try {
-      await deviceService.sendCommand(deviceId, command, payload);
+      const res = await deviceService.sendCommand(deviceId, command, payload);
       toast.success(`Command "${command}" sent successfully`);
+      
+      // Opt-in sync from command response state
+      if (res.data?.status) {
+         set((state) => ({
+            devices: state.devices.map(d => 
+               d.deviceId === deviceId ? { ...d, status: res.data.status } : d
+            )
+         }));
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || `Failed to send "${command}"`);
       throw error; // Re-throw to inform components
@@ -43,6 +52,15 @@ const useDeviceStore = create((set, get) => ({
       }));
     }
   },
+
+  updateDeviceStatus: (deviceId, newStatus) => {
+    set((state) => ({
+      devices: state.devices.map(d =>
+        d.deviceId === deviceId ? { ...d, status: newStatus } : d
+      )
+    }));
+  },
+
 
   deleteDevice: async (deviceId) => {
     try {

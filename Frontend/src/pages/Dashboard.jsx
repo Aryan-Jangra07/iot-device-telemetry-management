@@ -6,15 +6,15 @@ import { CardSkeleton, ChartSkeleton } from '../components/Skeletons';
 import EmptyState from '../components/EmptyState';
 import OnboardingModal from '../components/OnboardingModal';
 import { deviceService } from '../services/api';
-import { connectSocket } from '../services/socket';
+import { connectSocket, subscribeStatus } from '../services/socket';
 import useDeviceStore from '../store/deviceStore';
 import { 
   RefreshCcw, Plus, Layout, Grid2X2, LineChart as LineChartIcon,
-  Search, Bell, CheckCircle2, Cpu
+  Search, Bell, CheckCircle2, Cpu, Power
 } from 'lucide-react';
 
 const Dashboard = () => {
-  const { devices, isLoading: devicesLoading, fetchDevices } = useDeviceStore();
+  const { devices, isLoading: devicesLoading, fetchDevices, updateDeviceStatus } = useDeviceStore();
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [telemetry, setTelemetry] = useState([]);
   const [isTelemetryLoading, setIsTelemetryLoading] = useState(false);
@@ -25,6 +25,29 @@ const Dashboard = () => {
   useEffect(() => {
     fetchDevices();
   }, [fetchDevices]);
+
+  // Global subscriptions for device status changes
+  useEffect(() => {
+    if (!devices.length) return;
+    const unsubscribes = devices.map(device => 
+      subscribeStatus(device.deviceId, (data) => {
+        updateDeviceStatus(data.deviceId, data.status);
+      })
+    );
+    return () => {
+      unsubscribes.forEach(unsub => unsub());
+    };
+  }, [devices, updateDeviceStatus]);
+
+  // Keep selectedDevice perfectly in sync with the store's devices array
+  useEffect(() => {
+    if (selectedDevice) {
+      const updatedMatch = devices.find(d => d.deviceId === selectedDevice.deviceId);
+      if (updatedMatch && updatedMatch.status !== selectedDevice.status) {
+        setSelectedDevice(updatedMatch);
+      }
+    }
+  }, [devices, selectedDevice]);
 
   useEffect(() => {
     if (devices.length > 0 && !selectedDevice) {
@@ -187,7 +210,20 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                {isTelemetryLoading && telemetry.length === 0 ? (
+                {selectedDevice.status === 'offline' ? (
+                  <div className="h-[400px]">
+                    <EmptyState 
+                      icon={Power}
+                      title="Device Offline"
+                      message="This device is currently powered off. Connections to the telemetry stream are paused."
+                      actionText="Power On"
+                      onAction={async () => {
+                        const { sendCommand } = useDeviceStore.getState();
+                        await sendCommand(selectedDevice.deviceId, 'POWER_ON');
+                      }}
+                    />
+                  </div>
+                ) : isTelemetryLoading && telemetry.length === 0 ? (
                    <ChartSkeleton />
                 ) : telemetry.length === 0 ? (
                   <div className="h-64">
